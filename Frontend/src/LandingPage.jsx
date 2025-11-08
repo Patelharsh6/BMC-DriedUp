@@ -113,7 +113,7 @@ const LandingPage = () => {
           <div className="about-info">
             <h3 className="section-head">About US</h3>
             <p>
-              Founded by <br/><strong>1. Ansh Patoliya</strong><br/><strong>2. Het Limbani</strong><br/> <strong>3. Harsh Patel</strong><br/>
+              Founded by <br/><strong>1. Ansh Patoliya (230109) (USN:1AUA23BCS)</strong><br/><strong>2. Het Limbani (230106) (USN:1AUA23BCS063)</strong><br/> <strong>3. Harsh Patel (230105) (USN:1AUA23BCS)</strong><br/>
               DriedUp began from a love of healthy, sustainable living.
             </p>
           </div>
