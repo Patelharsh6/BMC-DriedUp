@@ -4,6 +4,7 @@ import LandingPage from './LandingPage';
 import SignInPage from './Components/Signin';
 import SignUp from './Components/SignUp';
 import MainPage from './Components/MainPage';
+import Homepage from './Components/HomePage';
 import './App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
       <Route path='/signinpage' element={<SignInPage/>}/>
       <Route path='/signuppage' element={<SignUp/>}/>
       <Route path='/mainpage' element={<MainPage/>}/>
+      <Route path='/homepage' element={<Homepage/>}/>
     </Routes>
   );
 }

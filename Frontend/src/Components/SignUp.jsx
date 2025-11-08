@@ -76,7 +76,11 @@ const SignUp = () => {
 
       if (res.status === 201) {
         alert(res.data.message);
-        navigate("/signinpage");
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem('fullname', res.data.user.fullname);
+        localStorage.setItem('email', res.data.user.email);
+        localStorage.setItem('address', res.data.user.address);
+        navigate("/homepage");
       }
     } catch (err) {
       console.error(err);
