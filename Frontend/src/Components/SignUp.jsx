@@ -62,7 +62,6 @@ const SignUp = () => {
     }
 
     setLoading(true);
-    // Call your backend API to create the user
     setTimeout(() => {
       setLoading(false);
       alert("Account created successfully!");
