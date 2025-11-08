@@ -4,7 +4,6 @@
     color: #1a4d29;
 }
 
-/* ===== Navbar ===== */
 .nav {
     background: #ffffff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -197,7 +196,6 @@
     box-shadow: 0 10px 20px rgba(46, 125, 50, 0.4);
 }
 
-/* ===== Benefits Section ===== */
 .benefits {
     text-align: center;
     padding: 100px 20px;
@@ -266,7 +264,6 @@
     line-height: 1.7;
 }
 
-/* ===== Products Section ===== */
 .products {
     text-align: center;
     padding: 100px 20px;
@@ -366,7 +363,6 @@
     box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
 }
 
-/* ===== Process Section ===== */
 .process {
     text-align: center;
     padding: 100px 20px;
@@ -538,7 +534,7 @@
     margin: 0 auto;
 }
 
-.footer-brand img{
+.footer-brand img {
     height: 100px;
     width: auto;
     margin-bottom: 0.5rem;
@@ -696,7 +692,6 @@
 }
 
 
-/* ===== Responsive ===== */
 @media (max-width: 768px) {
     .nav {
         padding: 12px 20px;

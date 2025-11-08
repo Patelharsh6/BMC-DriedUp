@@ -1,4 +1,3 @@
-/* --- Base Container --- */
 .driedup-container {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #e8f5e9, #e0f2f1);
@@ -13,6 +12,7 @@
   top: 0;
   z-index: 10;
   padding: 14px 20px;
+  position: relative;
 }
 
 .driedup-nav-container {
@@ -21,6 +21,12 @@
   align-items: center;
   max-width: 1280px;
   margin: 0 auto;
+}
+
+.nav-logo {
+  height: 40px;
+  width: auto;
+  margin-right: 12px;
 }
 
 .driedup-nav-logo {
@@ -79,7 +85,7 @@
 }
 
 .driedup-nav-toggle {
-  display: none; /* Hidden on desktop */
+  display: none;
   background: none;
   border: none;
   cursor: pointer;
@@ -96,7 +102,6 @@
   transition: all 0.3s ease;
 }
 
-/* --- Products Grid --- */
 .driedup-products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -139,7 +144,7 @@
   padding: 20px 25px 25px 25px;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Makes card info fill space */
+  flex-grow: 1;
 }
 
 .driedup-product-info h4 {
@@ -153,7 +158,7 @@
   font-size: 0.95rem;
   color: #4a6560;
   line-height: 1.6;
-  flex-grow: 1; /* Pushes bottom controls down */
+  flex-grow: 1;
 }
 
 .driedup-product-card-bottom {
@@ -219,7 +224,6 @@
   text-align: center;
 }
 
-/* --- Profile Modal --- */
 .driedup-modal-overlay {
   position: fixed;
   top: 0;
@@ -245,6 +249,11 @@
   animation: zoomIn 0.4s ease-out;
 }
 
+.slide-down-content {
+  animation: slideDownFromTop 0.5s ease-out forwards;
+  max-width: 450px;
+}
+
 .driedup-modal-close-btn {
   position: absolute;
   top: 10px;
@@ -262,13 +271,6 @@
   color: #333;
 }
 
-.driedup-modal-content h3 {
-  font-size: 1.8rem;
-  color: #004d40;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
 .driedup-profile-info {
   margin-bottom: 1.5rem;
 }
@@ -283,17 +285,78 @@
 .driedup-profile-info p {
   font-size: 1.1rem;
   color: #1a4d29;
-  margin-top: 4px;
+  margin: 4px 0 0 0;
   padding: 10px;
   background: #e8f5e9;
   border-radius: 8px;
 }
 
-/* --- Keyframe Animations --- */
+.driedup-cart-items-list {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.driedup-cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.driedup-cart-item-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 15px;
+}
+
+.driedup-cart-item-info {
+  flex-grow: 1;
+}
+
+.driedup-cart-item-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.driedup-cart-item-info span {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.driedup-cart-item .driedup-product-card-controls {
+  margin-left: 15px;
+}
+
+.driedup-cart-footer {
+  margin-top: 20px;
+  border-top: 2px solid #f0f0f0;
+  padding-top: 20px;
+}
+
+.driedup-cart-total {
+  text-align: right;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.driedup-checkout-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -304,6 +367,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -315,6 +379,7 @@
     opacity: 0;
     transform: scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -326,52 +391,46 @@
     opacity: 0;
     transform: rotate(-90deg);
   }
+
   to {
     opacity: 1;
     transform: rotate(0deg);
   }
 }
 
-@keyframes slideDown {
+@keyframes slideDownFromTop {
   from {
     opacity: 0;
-    max-height: 0;
-    transform: translateY(-10px);
+    transform: translateY(-50px);
   }
+
   to {
     opacity: 1;
-    max-height: 500px; /* Adjust as needed */
     transform: translateY(0);
   }
 }
 
-/* --- Responsive Design --- */
 @media (max-width: 768px) {
-  .driedup-nav-container {
-    flex-wrap: wrap;
-  }
-
   .driedup-nav-toggle {
-    display: flex; /* Show hamburger icon */
+    display: flex;
   }
 
   .driedup-nav-links {
-    display: none; /* Hide links by default */
+    display: none;
     flex-direction: column;
-    width: 92%;
+    width: 100%;
     background: white;
     position: absolute;
-    top: 73px; /* Height of the navbar */
+    top: 73px;
     left: 0;
-    padding: 1.5rem;
+    right: 0;
+    padding: 1.5rem 20px;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-    align-items: stretch;
     gap: 1.2rem;
-    animation: slideDown 0.4s ease-out;
   }
 
   .driedup-nav-links.show {
-    display: flex; /* Show when menu is open */
+    display: flex;
   }
 
   .driedup-nav-btn,
@@ -409,69 +468,4 @@
   .driedup-modal-content h3 {
     font-size: 1.5rem;
   }
-}
-
-
-/* --- ADDED --- Cart Modal Styles */
-
-.driedup-cart-items-list {
-  max-height: 40vh; /* Set a max height for scrolling */
-  overflow-y: auto; /* Add scrollbar if items overflow */
-  margin-top: 20px;
-}
-
-.driedup-cart-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.driedup-cart-item-img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-right: 15px;
-}
-
-.driedup-cart-item-info {
-  flex-grow: 1;
-}
-
-.driedup-cart-item-info h4 {
-  margin: 0 0 5px 0;
-  font-size: 1rem;
-}
-
-.driedup-cart-item-info span {
-  color: #555;
-  font-size: 0.9rem;
-}
-
-/* Use the same controls from the product card */
-.driedup-cart-item .driedup-product-card-controls {
-  margin-left: 15px;
-}
-
-.driedup-cart-footer {
-  margin-top: 20px;
-  border-top: 2px solid #f0f0f0;
-  padding-top: 20px;
-}
-
-.driedup-cart-total {
-  text-align: right;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.driedup-checkout-btn {
-  width: 100%;
-  padding: 12px;
-  font-size: 1rem;
 }

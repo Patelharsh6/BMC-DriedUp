@@ -23,8 +23,6 @@ const connectDB = async () => {
   }
 };
 
-// --- UPDATED: userSchema ---
-// The address field is now an object to store the full shipping details
 const userSchema = new mongoose.Schema({
   fullname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -32,7 +30,7 @@ const userSchema = new mongoose.Schema({
   address: {
     name: { type: String, default: '' },
     phone: { type: String, default: '' },
-    address: { type: String, default: '' }, // This was the old field
+    address: { type: String, default: '' },
     city: { type: String, default: '' },
     state: { type: String, default: '' },
     zip: { type: String, default: '' }
@@ -43,7 +41,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('users', userSchema);
 
-// --- Order Schema (No Changes) ---
 const orderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true },
   items: [{
@@ -70,8 +67,6 @@ const Order = mongoose.model('orders', orderSchema);
 
 app.get('/', (req, res) => res.send('Hello from DripedUp Back-end!'));
 
-// --- UPDATED: /api/signup ---
-// Now saves the user's name and address string into the new address object
 app.post('/api/signup', async (req, res) => {
   const { fullname, email, password, address } = req.body;
 
@@ -89,11 +84,6 @@ app.post('/api/signup', async (req, res) => {
       fullname,
       email,
       password: passwordHash,
-      // Save data into the new address object
-      address: {
-        name: fullname,
-        address: address // Put the single-line address here
-      },
       purchase: 0
     });
 
@@ -105,7 +95,6 @@ app.post('/api/signup', async (req, res) => {
         id: user._id,
         fullname: user.fullname,
         email: user.email,
-        address: user.address // This will now send the object
       }
     });
   } catch (err) {
@@ -114,8 +103,6 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-// --- UPDATED: /api/signin ---
-// No code change, but now `user.address` which is returned is an object
 app.post('/api/signin', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -141,7 +128,7 @@ app.post('/api/signin', async (req, res) => {
         id: user._id,
         fullname: user.fullname,
         email: user.email,
-        address: user.address // This is now an object!
+        address: user.address
       }
     });
   } catch (err) {
@@ -150,40 +137,95 @@ app.post('/api/signin', async (req, res) => {
   }
 });
 
-// --- /api/create-order (No Changes) ---
+app.post('/api/getPurchase', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: 'Email is required' });
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.status(200).json({ purchase: user.purchase });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 app.post('/api/create-order', async (req, res) => {
   const { userId, items, totalPrice, shippingAddress } = req.body;
   if (!userId || !items || items.length === 0 || !totalPrice || !shippingAddress) {
     return res.status(400).json({ message: 'Invalid order data' });
   }
+
   try {
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    let finalPrice = totalPrice;
+    if (user.purchase === 0) {
+      finalPrice = totalPrice * 0.85;
     }
+
     const order = new Order({
       userId,
       items,
-      totalPrice,
+      totalPrice: finalPrice,
       shippingAddress,
       status: 'Pending'
     });
+
     const savedOrder = await order.save();
-    return res.status(201).json({
+
+    user.purchase += 1;
+    await user.save();
+
+    res.status(201).json({
       message: 'Order placed successfully!',
       order: savedOrder
     });
   } catch (err) {
     console.error('Error creating order:', err);
-    return res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-// --- NEW: Get Order History Endpoint ---
+
+
+// // --- /api/create-order (No Changes) ---
+// app.post('/api/create-order', async (req, res) => {
+//   const { userId, items, totalPrice, shippingAddress } = req.body;
+//   if (!userId || !items || items.length === 0 || !totalPrice || !shippingAddress) {
+//     return res.status(400).json({ message: 'Invalid order data' });
+//   }
+//   try {
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+//     const order = new Order({
+//       userId,
+//       items,
+//       totalPrice,
+//       shippingAddress,
+//       status: 'Pending'
+//     });
+//     const savedOrder = await order.save();
+//     return res.status(201).json({
+//       message: 'Order placed successfully!',
+//       order: savedOrder
+//     });
+//   } catch (err) {
+//     console.error('Error creating order:', err);
+//     return res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
+
 app.get('/api/orders/:userId', async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.params.userId })
-                              .sort({ createdAt: -1 }); // Newest first
+      .sort({ createdAt: -1 }); // Newest first
 
     if (!orders) {
       return res.status(404).json({ message: 'No orders found' });
@@ -195,10 +237,10 @@ app.get('/api/orders/:userId', async (req, res) => {
   }
 });
 
-// --- NEW: Update User Address Endpoint ---
+
 app.put('/api/user/address', async (req, res) => {
   const { userId, address } = req.body;
-  
+
   if (!userId || !address) {
     return res.status(400).json({ message: 'Invalid data' });
   }
@@ -209,11 +251,9 @@ app.put('/api/user/address', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update the address object
     user.address = address;
     await user.save();
-    
-    // Return the updated user (excluding password)
+
     return res.status(200).json({
       message: 'Address updated successfully!',
       user: {

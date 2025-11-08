@@ -5,8 +5,8 @@ import SignInPage from './Components/Signin';
 import SignUp from './Components/SignUp';
 import MainPage from './Components/MainPage';
 import Homepage from './Components/HomePage';
-import Checkout from './Components/Checkout'; // New page
-import OrderHistory from './Components/OrderHistory'; // New page
+import Checkout from './Components/Checkout'; 
+import OrderHistory from './Components/OrderHistory'; 
 import './App.css';
 
 function App() {

@@ -63,10 +63,9 @@ const products = [
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem("user"); // Check login status
+  const isLoggedIn = localStorage.getItem("user");
   const [title, setTitle] = useState("");
 
-  // Typewriter animation effect
   useEffect(() => {
     const fullText = "Start Shopping... 🛒 🛍️";
     let i = 0;

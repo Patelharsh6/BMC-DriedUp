@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './OrderHistory.css'; // We will create this
+import './OrderHistory.css';
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -44,7 +44,7 @@ const OrderHistory = () => {
 
       {loading && <p>Loading your orders...</p>}
       {error && <p className="driedup-error-msg">{error}</p>}
-      
+
       {!loading && !error && orders.length === 0 && (
         <p>You have not placed any orders yet.</p>
       )}

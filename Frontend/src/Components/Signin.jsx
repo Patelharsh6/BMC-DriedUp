@@ -15,14 +15,12 @@ const SignInPage = () => {
 
     try {
       const res = await axios.post("http://localhost:3021/api/signin", { email, password });
-      
+
       if (res.status === 200) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         alert("Login Successful!");
-        localStorage.setItem('fullname', res.data.user.fullname);
         localStorage.setItem('email', res.data.user.email);
-        localStorage.setItem('address', res.data.user.address);
-        navigate("/homepage"); 
+        navigate("/homepage");
       }
     } catch (err) {
       console.error(err);

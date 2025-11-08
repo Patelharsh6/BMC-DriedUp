@@ -1,188 +1,147 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Checkout.css';
 
 const Checkout = () => {
-  const { cartItems, totalPrice, clearCart } = useCart();
+  const { cartItems, clearCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { totalPrice, discountApplied } = location.state || {};
 
-  // --- UPDATED: Pre-fill state from localStorage ---
-  const [formData, setFormData] = useState(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    
-    // Check if user and user.address exist
-    if (storedUser && storedUser.address) {
-      return {
-        name: storedUser.address.name || storedUser.fullname || '',
-        phone: storedUser.address.phone || '',
-        address: storedUser.address.address || '',
-        city: storedUser.address.city || '',
-        state: storedUser.address.state || '',
-        zip: storedUser.address.zip || ''
-      };
-    }
-    // Fallback if no user or address is stored
-    return { name: '', phone: '', address: '', city: '', state: '', zip: '' };
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+  const [formData, setFormData] = useState({
+    name: storedUser?.fullname || '',
+    phone: storedUser?.address.phone || '',
+    address: storedUser?.address.address || '',
+    city: storedUser?.address.city || '',
+    state: storedUser?.address.state || '',
+    zip: storedUser?.address.zip || ''
   });
 
-  // --- NEW: State for the "Save Address" checkbox ---
   const [saveAddress, setSaveAddress] = useState(true);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // --- UPDATED: handleSubmit to also save the address ---
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (!storedUser || !storedUser.id) {
-      alert('You must be logged in to place an order.');
-      navigate('/signin');
-      return;
-    }
-
-    const orderData = {
-      userId: storedUser.id,
-      items: cartItems,
-      totalPrice: totalPrice,
-      shippingAddress: formData,
-    };
+    if (!storedUser?.id) { alert('Login required'); navigate('/signinpage'); return; }
 
     try {
-      // 1. Create the order (no change)
-      const response = await fetch('http://localhost:3021/api/create-order', {
+      const res = await fetch('http://localhost:3021/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify({
+          userId: storedUser.id,
+          items: cartItems,
+          totalPrice,
+          shippingAddress: formData
+        })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to place order.');
-      }
+      if (!res.ok) throw new Error('Failed to place order');
 
-      // --- NEW: 2. Save address if box is checked ---
       if (saveAddress) {
-        const addrResponse = await fetch('http://localhost:3021/api/user/address', {
+        const addrRes = await fetch('http://localhost:3021/api/user/address', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: storedUser.id,
-            address: formData // Send the form data as the new address
-          }),
+          body: JSON.stringify({ userId: storedUser.id, address: formData })
         });
-        
-        if (addrResponse.ok) {
-          // Update localStorage with the new address
-          const { user } = await addrResponse.json();
+        if (addrRes.ok) {
+          const { user } = await addrRes.json();
           localStorage.setItem('user', JSON.stringify(user));
         }
       }
 
-      // 3. Handle success (no change)
-      alert('Order placed successfully!');
       clearCart();
-      navigate('/orders'); // Go to order history
-
+      alert(`Order placed successfully! ${discountApplied ? '15% discount applied.' : ''}`);
+      navigate('/orders');
     } catch (err) {
-      console.error('Error placing order:', err);
-      alert(`Error: ${err.message}`);
+      console.error(err);
+      alert(err.message);
     }
   };
 
   return (
     <div className="driedup-checkout-container">
-      <button className="driedup-back-btn" onClick={() => navigate('/homepage')}>
-        &larr; Back to Shop
-      </button>
-      
-      <div className="driedup-checkout-grid">
-        {/* ===== Left Column: Address Form ===== */}
-        <div className="driedup-checkout-form">
-          <h3>Shipping Address</h3>
-          <form id="shipping-form" onSubmit={handleSubmit}>
-            {/* All form inputs are now controlled by the pre-filled state */}
-            <div className="driedup-form-group">
-              <label htmlFor="name">Full Name</label>
-              <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
-            </div>
-            <div className="driedup-form-group">
-              <label htmlFor="phone">Phone Number</label>
-              <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} required />
-            </div>
-            <div className="driedup-form-group">
-              <label htmlFor="address">Address</label>
-              <input type="text" id="address" name="address" value={formData.address} onChange={handleChange} required />
-            </div>
-            <div className="driedup-form-group-row">
-              <div className="driedup-form-group">
-                <label htmlFor="city">City</label>
-                <input type="text" id="city" name="city" value={formData.city} onChange={handleChange} required />
-              </div>
-              <div className="driedup-form-group">
-                <label htmlFor="state">State</label>
-                <input type="text" id="state" name="state" value={formData.state} onChange={handleChange} required />
-              </div>
-            </div>
-            <div className="driedup-form-group">
-              <label htmlFor="zip">ZIP / Postal Code</label>
-              <input type="text" id="zip" name="zip" value={formData.zip} onChange={handleChange} required />
-            </div>
+      <button className="back-btn-checkout" onClick={() => navigate('/homepage')}>&larr; Back to Shop</button>
 
-            {/* --- NEW: Save Address Checkbox --- */}
-            <div className="driedup-form-group-checkbox">
-              <input
-                type="checkbox"
-                id="saveAddress"
-                name="saveAddress"
-                checked={saveAddress}
-                onChange={(e) => setSaveAddress(e.target.checked)}
-              />
-              <label htmlFor="saveAddress">Save this address to my profile</label>
-            </div>
+      <div className="driedup-checkout-wrapper">
+        <form className="checkout-form" onSubmit={handleSubmit}>
+          <h2>Shipping Information</h2>
 
-          </form>
-        </div>
+          <label>
+            Full Name
+            <input name="name" value={formData.name} onChange={handleChange} required />
+          </label>
 
-        {/* ===== Right Column: Order Summary (No changes) ===== */}
-        <div className="driedup-order-summary">
-          <h3>Order Summary</h3>
-          <div className="driedup-summary-items">
-            {cartItems.length === 0 ? (
-              <p>Your cart is empty.</p>
-            ) : (
-              cartItems.map((item) => (
-                <div className="driedup-summary-item" key={item.id}>
-                  <img src={item.img} alt={item.name} className="driedup-summary-item-img" />
-                  <div className="driedup-summary-item-info">
+          <label>
+            Phone
+            <input name="phone" value={formData.phone} onChange={handleChange} required />
+          </label>
+
+          <label>
+            Address
+            <input name="address" value={formData.address} onChange={handleChange} required />
+          </label>
+
+          <label>
+            City
+            <input name="city" value={formData.city} onChange={handleChange} required />
+          </label>
+
+          <label>
+            State
+            <input name="state" value={formData.state} onChange={handleChange} required />
+          </label>
+
+          <label>
+            ZIP
+            <input name="zip" value={formData.zip} onChange={handleChange} required />
+          </label>
+
+          <label className="save-address">
+            <input
+              type="checkbox"
+              checked={saveAddress}
+              onChange={e => setSaveAddress(e.target.checked)}
+            />
+            Save Address
+          </label>
+
+
+          <button type="submit" className="place-order-btn">Place Order</button>
+        </form>
+
+        <div className="checkout-summary">
+          <h2>Order Summary</h2>
+          {cartItems.length === 0 ? (
+            <p>Your cart is empty.</p>
+          ) : (
+            <div className="cart-items">
+              {cartItems.map(item => (
+                <div className="checkout-cart-item" key={item.id}>
+                  <img src={item.img} alt={item.name} className="checkout-cart-img" />
+                  <div className="checkout-cart-info">
                     <h4>{item.name}</h4>
-                    <span>{item.price} ₹ x {item.quantity}</span>
+                    <p>Qty: {item.quantity}</p>
                   </div>
-                  <span className="driedup-summary-item-total">
-                    {item.price * item.quantity} ₹
-                  </span>
+                  <div className="checkout-cart-price">
+                    ₹{(item.price * item.quantity).toFixed(2)}
+                  </div>
                 </div>
-              ))
-            )}
-          </div>
-          <div className="driedup-summary-footer">
-            <div className="driedup-summary-total">
-              <strong>Total:</strong>
-              <strong>{totalPrice.toFixed(2)} ₹</strong>
+              ))}
             </div>
-            <button
-              type="submit"
-              form="shipping-form"
-              className="driedup-nav-btn cta driedup-checkout-btn"
-              disabled={cartItems.length === 0}
-            >
-              Place Order
-            </button>
+          )}
+          <hr />
+          <div className="checkout-total">
+            <strong>Total:</strong>
+            <span>₹{totalPrice?.toFixed(2)}</span>
           </div>
+          {discountApplied && <div className="checkout-discount">15% First Order Discount Applied!</div>}
         </div>
       </div>
     </div>

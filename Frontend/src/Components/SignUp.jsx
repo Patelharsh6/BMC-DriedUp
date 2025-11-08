@@ -71,14 +71,12 @@ const SignUp = () => {
         fullname: formData.name,
         email: formData.email,
         password: formData.password,
-        address: formData.address,
       });
 
       if (res.status === 201) {
         alert(res.data.message);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         localStorage.setItem('fullname', res.data.user.fullname);
-        localStorage.setItem('email', res.data.user.email);
         localStorage.setItem('address', res.data.user.address);
         navigate("/homepage");
       }
@@ -111,13 +109,6 @@ const SignUp = () => {
             placeholder="Email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Address"
-            value={formData.address}
-            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             required
           />
 
