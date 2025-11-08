@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
 import Mylogo from "./assets/Mylogo.png";
 
 const LandingPage = () => {
+  const navigate=useNavigate();
   return (
     <div className="LandingPage-container">
       <nav className="nav">
@@ -14,9 +16,9 @@ const LandingPage = () => {
 
           <div className="nav-links">
             <a href="#products" className="nav-item">Products</a>
-            <a href="#about" className="nav-item">About</a>
             <a href="#process" className="nav-item">Process</a>
-            <button className="btn-login">Login</button>
+            <a href="#about" className="nav-item">About</a>
+            <button className="btn-login" onClick={()=>navigate('/signinpage')}>Login</button>
             <button className="btn-shop">Shop Now</button>
           </div>
         </div>
