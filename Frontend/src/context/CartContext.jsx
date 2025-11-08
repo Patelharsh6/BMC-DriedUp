@@ -1,6 +1,5 @@
 import React, { createContext, useState, useMemo, useContext } from 'react';
 
-// --- This is your product data from Homepage.js ---
 const productsData = [
   { id: 1, name: 'Sun-Kissed Apricots', desc: 'Sweet, chewy, and full of Vitamin A.', price: 349, img: 'https://placehold.co/400x300/FCD34D/4D7C0F?text=Apricots' },
   { id: 2, name: 'Tropical Mango Slices', desc: 'A burst of tropical flavor in every bite.', price: 499, img: 'https://placehold.co/400x300/FCD34D/4D7C0F?text=Dried+Mango' },
@@ -12,10 +11,8 @@ const productsData = [
   { id: 8, name: 'Roasted Walnuts', desc: 'Crunchy walnuts for your daily snack.', price: 550, img: 'https://placehold.co/400x300/C7D2FE/4D7C0F?text=Walnuts' },
 ];
 
-// 1. Create the Context
 export const CartContext = createContext(null);
 
-// 2. Create the Provider (the component that holds the state)
 export const CartProvider = ({ children }) => {
   const [products, setProducts] = useState(
     productsData.map((p) => ({ ...p, quantity: 0 }))
@@ -23,7 +20,9 @@ export const CartProvider = ({ children }) => {
 
   const handleAddToCart = (id) => {
     setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, quantity: p.quantity + 1 } : p))
+      prev.map((p) =>
+        p.id === id ? { ...p, quantity: p.quantity + 1 } : p
+      )
     );
   };
 
@@ -35,50 +34,34 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  // --- NEW: Function to clear the cart ---
   const clearCart = () => {
-    // Resets all product quantities back to 0
     setProducts(productsData.map((p) => ({ ...p, quantity: 0 })));
   };
 
+  const cartItems = useMemo(() => products.filter((p) => p.quantity > 0), [products]);
 
-  // Calculations that all components might need
-  const cartItems = useMemo(
-    () => products.filter((p) => p.quantity > 0),
-    [products]
-  );
-  const totalItems = useMemo(
-    () => products.reduce((acc, p) => acc + p.quantity, 0),
-    [products]
-  );
+  const totalItems = useMemo(() => products.reduce((acc, p) => acc + p.quantity, 0), [products]);
+
   const totalPrice = useMemo(
-    () =>
-      cartItems.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0
-      ),
+    () => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
     [cartItems]
   );
 
-  // The 'value' is what all consuming components will get
   const value = {
-    products, 
-    cartItems, 
-    handleAddToCart,
-    handleRemoveFromCart,
+    products,
+    cartItems,
     totalItems,
     totalPrice,
-    clearCart, // --- NEW: Expose the function ---
+    handleAddToCart,
+    handleRemoveFromCart,
+    clearCart,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
-// 3. Create a custom "hook" to use the context easily
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
+  if (!context) throw new Error('useCart must be used within a CartProvider');
   return context;
 };

@@ -7,6 +7,7 @@
     background: linear-gradient(135deg, #e0f2f1, #e8f5e9);
     color: #1a4d29;
     overflow: hidden;
+    padding: 20px;
 }
 
 .signin-card {
@@ -21,7 +22,7 @@
 }
 
 .signin-card h2 {
-    font-size: 2.5rem;
+    font-size: 2.4rem;
     color: #004d40;
     margin-bottom: 30px;
     font-weight: 700;
@@ -32,6 +33,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: 100%;
 }
 
 .signin-form label {
@@ -47,12 +49,57 @@
     font-size: 16px;
     outline: none;
     transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .signin-form input:focus {
     border-color: #43a047;
-    box-shadow: 0 0 8px rgba(67, 160, 71, 0.2);
+    box-shadow: 0 0 8px rgba(67, 160, 71, 0.25);
     transform: scale(1.02);
+}
+
+.password-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border: 1.5px solid #b2dfdb;
+    border-radius: 10px;
+    padding: 0 10px;
+    height: 46px;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.password-field:hover {
+    border-color: #43a047;
+    box-shadow: 0 0 8px rgba(67, 160, 71, 0.25);
+}
+
+.password-field input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    flex: 1;
+    background: transparent;
+    height: 100%;
+}
+
+.show-password-toggle {
+    cursor: pointer;
+    color: #00796b;
+    font-size: 14px;
+    font-weight: 600;
+    user-select: none;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+    padding-left: 10px;
+}
+
+.show-password-toggle:hover {
+    color: #2e7d32;
 }
 
 .signin-btn {
@@ -68,6 +115,7 @@
     box-shadow: 0 6px 15px rgba(67, 160, 71, 0.3);
     animation: zoomIn 1s ease-out 0.2s;
     animation-fill-mode: backwards;
+    width: 100%;
 }
 
 .signin-btn:hover {
@@ -96,7 +144,6 @@
     text-decoration: underline;
 }
 
-/* ===== Back Button ===== */
 .back-btn {
     padding: 10px 20px;
     border: 1px solid #00796b;
@@ -117,20 +164,39 @@
 }
 
 @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 @keyframes zoomIn {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
+/* Responsive */
 @media (max-width: 768px) {
     .signin-card {
         padding: 40px 25px;
