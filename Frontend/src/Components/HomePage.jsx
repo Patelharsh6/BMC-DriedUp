@@ -155,7 +155,7 @@ const Homepage = () => {
         </div>
         <div className="driedup-profile-info">
           <strong>Address:</strong>
-          <p>{userData?.address || 'N/A'}</p>
+          <p>{userData?.address.address || 'N/A'}</p>
         </div>
       </Modal>
 

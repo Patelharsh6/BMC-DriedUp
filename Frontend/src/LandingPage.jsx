@@ -61,7 +61,7 @@ const LandingPage = () => {
             <p>Sweet, chewy, and full of Vitamin A.</p>
             <div className="product-bottom">
               <span>349.00 ₹</span>
-              <button className="btn-cart">Add to Cart</button>
+              <button className="btn-cart" onClick={()=>alert('Login required!')}>Add to Cart</button>
             </div>
           </div>
 
@@ -71,7 +71,7 @@ const LandingPage = () => {
             <p>A burst of tropical flavor in every bite.</p>
             <div className="product-bottom">
               <span>499 ₹</span>
-              <button className="btn-cart">Add to Cart</button>
+              <button className="btn-cart" onClick={()=>alert('Login required!')}>Add to Cart</button>
             </div>
           </div>
 
@@ -81,7 +81,7 @@ const LandingPage = () => {
             <p>A tangy, sweet antioxidant powerhouse.</p>
             <div className="product-bottom">
               <span>650 ₹</span>
-              <button className="btn-cart">Add to Cart</button>
+              <button className="btn-cart" onClick={()=>alert('Login required!')}>Add to Cart</button>
             </div>
           </div>
         </div>
