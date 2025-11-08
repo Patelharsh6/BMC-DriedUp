@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import eyeOpen from '../assets/eye_open.png';
 import eyeClose from '../assets/eye-close.svg';
 import "./SignUpPage.css";
@@ -56,17 +57,35 @@ const SignUp = () => {
       alert("Passwords do not match!");
       return;
     }
+
     if (!formData.name || !formData.email || !formData.password) {
-      alert("Please fill required fields");
+      alert("Please fill all required fields!");
       return;
     }
 
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      const res = await axios.post("http://localhost:3021/api/signup", {
+        fullname: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (res.status === 201) {
+        alert(res.data.message);
+        navigate("/homepage");
+      }
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.data && err.response.data.message) {
+        alert(err.response.data.message);
+      } else {
+        alert("Server error. Please try again later.");
+      }
+    } finally {
       setLoading(false);
-      alert("Account created successfully!");
-      navigate("/signinpage");
-    }, 2000);
+    }
   };
 
   return (
