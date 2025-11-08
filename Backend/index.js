@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema({
   fullname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  address: { type: String, required: true },
   purchase: { type: Number, default: 0 },
   isVerified: { type: Boolean, default: true } // change to false if you want email verification
 }, { timestamps: true });
@@ -36,35 +37,35 @@ const User = mongoose.model('users', userSchema);
 app.get('/', (req, res) => res.send('Hello from DripedUp Back-end!'));
 
 app.post('/api/signup', async (req, res) => {
-  const { fullname, email, password } = req.body;
-  if (!fullname || !email || !password) {
-    return res.status(400).json({ message: 'Please enter all required fields' });
+  const { fullname, email, password, address } = req.body;
+
+  if (!fullname || !email || !password || !address) {
+    return res.status(400).json({ message: 'Please fill all required fields' });
   }
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(400).json({ message: 'User already exists' });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
+    const user = new User({
       fullname,
       email,
-      password: hashedPassword,
-      purchase: 0,
-      isVerified: true,
+      password: passwordHash,
+      address,
+      purchase: 0
     });
 
-    await newUser.save();
+    await user.save();
 
     return res.status(201).json({
-      message: 'User registered successfully',
+      message: 'User registered successfully!',
       user: {
-        id: newUser._id,
-        fullname: newUser.fullname,
-        email: newUser.email,
+        id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        address: user.address
       }
     });
   } catch (err) {
@@ -100,6 +101,7 @@ app.post('/api/signin', async (req, res) => {
         id: user._id,
         fullname: user.fullname,
         email: user.email,
+        address:user.address
       }
     });
   } catch (err) {

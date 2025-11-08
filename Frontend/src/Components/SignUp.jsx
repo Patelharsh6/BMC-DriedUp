@@ -13,6 +13,7 @@ const SignUp = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    address: "",
   });
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -58,7 +59,7 @@ const SignUp = () => {
       return;
     }
 
-    if (!formData.name || !formData.email || !formData.password) {
+    if (!formData.name || !formData.email || !formData.password || !formData.address) {
       alert("Please fill all required fields!");
       return;
     }
@@ -70,11 +71,12 @@ const SignUp = () => {
         fullname: formData.name,
         email: formData.email,
         password: formData.password,
+        address: formData.address,
       });
 
       if (res.status === 201) {
         alert(res.data.message);
-        navigate("/homepage");
+        navigate("/signinpage");
       }
     } catch (err) {
       console.error(err);
@@ -105,6 +107,13 @@ const SignUp = () => {
             placeholder="Email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Address"
+            value={formData.address}
+            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             required
           />
 
