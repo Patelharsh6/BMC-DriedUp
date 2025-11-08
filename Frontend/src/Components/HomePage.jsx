@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext.jsx';
 import Mylogo from "../assets/Mylogo.png";
 import './Homepage.css';
 
-// --- Product Data ---
-const productsData = [
-  { id: 1, name: 'Sun-Kissed Apricots', desc: 'Sweet, chewy, and full of Vitamin A.', price: 349, img: 'https://placehold.co/400x300/FCD34D/4D7C0F?text=Apricots' },
-  { id: 2, name: 'Tropical Mango Slices', desc: 'A burst of tropical flavor in every bite.', price: 499, img: 'https://placehold.co/400x300/FCD34D/4D7C0F?text=Dried+Mango' },
-  { id: 3, name: 'Forest Berry Mix', desc: 'A tangy, sweet antioxidant powerhouse.', price: 650, img: 'https://placehold.co/400x300/F87171/4D7C0F?text=Dried+Berries' },
-  { id: 4, name: 'Crunchy Almonds', desc: 'Perfectly roasted for a healthy snack.', price: 399, img: 'https://placehold.co/400x300/FFEDD5/4D7C0F?text=Almonds' },
-  { id: 5, name: 'Cashew Delight', desc: 'Creamy cashews with a hint of salt.', price: 499, img: 'https://placehold.co/400x300/D9F99D/4D7C0F?text=Cashews' },
-  { id: 6, name: 'Pistachio Crunch', desc: 'Nutty and delicious pistachios.', price: 599, img: 'https://placehold.co/400x300/DEF7FF/4D7C0F?text=Pistachios' },
-  { id: 7, name: 'Mixed Dry Fruits', desc: 'A healthy mix of dried fruits.', price: 699, img: 'https://placehold.co/400x300/FBCFE8/4D7C0F?text=Mixed+Fruits' },
-  { id: 8, name: 'Roasted Walnuts', desc: 'Crunchy walnuts for your daily snack.', price: 550, img: 'https://placehold.co/400x300/C7D2FE/4D7C0F?text=Walnuts' },
-];
-
 // --- Homepage Component ---
 const Homepage = () => {
-  const [products, setProducts] = useState(
-    productsData.map((p) => ({ ...p, quantity: 0 }))
-  );
+  // --- All cart logic is GONE from here ---
+  // --- We get everything from the global context ---
+  const {
+    products,
+    cartItems,
+    handleAddToCart,
+    handleRemoveFromCart,
+    totalItems,
+    totalPrice,
+  } = useCart();
+
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userData, setUserData] = useState({ name: '', email: '', address: '' });
   const navigate = useNavigate();
 
-  // On component mount, set dummy user data in localStorage if it doesn't exist
-  // This is just for testing the profile modal
+  // This logic is still specific to the homepage, so it stays
   useEffect(() => {
     if (!localStorage.getItem('user')) {
       const dummyUser = {
@@ -38,24 +35,6 @@ const Homepage = () => {
     }
   }, []);
 
-  // --- Cart Logic ---
-  const handleAddToCart = (id) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, quantity: p.quantity + 1 } : p))
-    );
-  };
-
-  const handleRemoveFromCart = (id) => {
-    setProducts((prev) =>
-      prev.map((p) =>
-        p.id === id && p.quantity > 0 ? { ...p, quantity: p.quantity - 1 } : p
-      )
-    );
-  };
-
-  const totalItems = products.reduce((acc, p) => acc + p.quantity, 0);
-
-  // --- Profile Modal Logic ---
   const handleOpenProfile = () => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -69,10 +48,18 @@ const Homepage = () => {
     setIsProfileOpen(true);
   };
 
-  // --- Logout Logic ---
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/');
+    navigate('/'); // You might want to navigate to a /login page instead
+  };
+
+  // --- NEW: Function to navigate to new pages ---
+  const goToCheckout = () => {
+    navigate('/checkout');
+  };
+  
+  const goToOrders = () => {
+    navigate('/orders');
   };
 
   return (
@@ -86,7 +73,6 @@ const Homepage = () => {
             className="driedup-nav-toggle"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {/* Hamburger Icon Lines */}
             <span />
             <span />
             <span />
@@ -95,10 +81,16 @@ const Homepage = () => {
             <button className="driedup-nav-btn" onClick={handleOpenProfile}>
               Profile
             </button>
-            <button className="driedup-nav-btn">Previous Orders</button>
+            {/* --- UPDATED --- */}
+            <button className="driedup-nav-btn" onClick={goToOrders}>
+              Previous Orders
+            </button>
             <div className="driedup-cart-btn-wrapper">
-              <button className="driedup-nav-btn cta">
-                Cart ({totalItems})
+              <button
+                className="driedup-nav-btn cta"
+                onClick={() => setIsCartOpen(true)}
+              >
+                Cart ({totalItems}) {/* Now from context */}
               </button>
             </div>
             <button
@@ -113,7 +105,7 @@ const Homepage = () => {
 
       {/* ===== Products Grid ===== */}
       <main className="driedup-products-grid">
-        {products.map((product, index) => (
+        {products.map((product, index) => ( /* 'products' now from context */
           <div
             className="driedup-product-card"
             key={product.id}
@@ -158,7 +150,7 @@ const Homepage = () => {
         ))}
       </main>
 
-      {/* ===== Profile Modal ===== */}
+      {/* ===== Profile Modal (Stays the same) ===== */}
       {isProfileOpen && (
         <div
           className="driedup-modal-overlay"
@@ -187,6 +179,81 @@ const Homepage = () => {
               <strong>Address:</strong>
               <p>{userData.address}</p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Cart Modal (Gets data from context) ===== */}
+      {isCartOpen && (
+        <div
+          className="driedup-modal-overlay"
+          onClick={() => setIsCartOpen(false)}
+        >
+          <div
+            className="driedup-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="driedup-modal-close-btn"
+              onClick={() => setIsCartOpen(false)}
+            >
+              &times;
+            </button>
+            <h3>Your Cart</h3>
+            <div className="driedup-cart-items-list">
+              {cartItems.length === 0 ? ( /* 'cartItems' from context */
+                <p>Your cart is empty.</p>
+              ) : (
+                cartItems.map((item) => (
+                  <div className="driedup-cart-item" key={item.id}>
+                    <img
+                      src={item.img}
+                      alt={item.name}
+                      className="driedup-cart-item-img"
+                    />
+                    <div className="driedup-cart-item-info">
+                      <h4>{item.name}</h4>
+                      <span>
+                        {item.price} ₹ x {item.quantity}
+                      </span>
+                    </div>
+                    <div className="driedup-product-card-controls">
+                      <button
+                        className="driedup-quantity-btn"
+                        onClick={() => handleRemoveFromCart(item.id)}
+                      >
+                        -
+                      </button>
+                      <span className="driedup-quantity-display">
+                        {item.quantity}
+                      </span>
+                      <button
+                        className="driedup-add-btn"
+                        onClick={() => handleAddToCart(item.id)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {cartItems.length > 0 && (
+              <div className="driedup-cart-footer">
+                <div className="driedup-cart-total">
+                  {/* 'totalPrice' from context */}
+                  <strong>Total: {totalPrice.toFixed(2)} ₹</strong>
+                </div>
+                {/* --- UPDATED --- */}
+                <button
+                  className="driedup-nav-btn cta driedup-checkout-btn"
+                  onClick={goToCheckout}
+                >
+                  Proceed to Checkout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

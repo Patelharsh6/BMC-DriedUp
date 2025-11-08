@@ -410,3 +410,68 @@
     font-size: 1.5rem;
   }
 }
+
+
+/* --- ADDED --- Cart Modal Styles */
+
+.driedup-cart-items-list {
+  max-height: 40vh; /* Set a max height for scrolling */
+  overflow-y: auto; /* Add scrollbar if items overflow */
+  margin-top: 20px;
+}
+
+.driedup-cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.driedup-cart-item-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 15px;
+}
+
+.driedup-cart-item-info {
+  flex-grow: 1;
+}
+
+.driedup-cart-item-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+}
+
+.driedup-cart-item-info span {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* Use the same controls from the product card */
+.driedup-cart-item .driedup-product-card-controls {
+  margin-left: 15px;
+}
+
+.driedup-cart-footer {
+  margin-top: 20px;
+  border-top: 2px solid #f0f0f0;
+  padding-top: 20px;
+}
+
+.driedup-cart-total {
+  text-align: right;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.driedup-checkout-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+}
