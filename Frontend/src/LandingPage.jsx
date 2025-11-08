@@ -60,7 +60,7 @@ const LandingPage = () => {
             <h4>Sun-Kissed Apricots</h4>
             <p>Sweet, chewy, and full of Vitamin A.</p>
             <div className="product-bottom">
-              <span>$9.99</span>
+              <span>349.00 ₹</span>
               <button className="btn-cart">Add to Cart</button>
             </div>
           </div>
@@ -70,7 +70,7 @@ const LandingPage = () => {
             <h4>Tropical Mango Slices</h4>
             <p>A burst of tropical flavor in every bite.</p>
             <div className="product-bottom">
-              <span>$12.99</span>
+              <span>499 ₹</span>
               <button className="btn-cart">Add to Cart</button>
             </div>
           </div>
@@ -80,7 +80,7 @@ const LandingPage = () => {
             <h4>Forest Berry Mix</h4>
             <p>A tangy, sweet antioxidant powerhouse.</p>
             <div className="product-bottom">
-              <span>$14.99</span>
+              <span>650 ₹</span>
               <button className="btn-cart">Add to Cart</button>
             </div>
           </div>
