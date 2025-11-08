@@ -68,9 +68,9 @@ const Order = mongoose.model('orders', orderSchema);
 app.get('/', (req, res) => res.send('Hello from DripedUp Back-end!'));
 
 app.post('/api/signup', async (req, res) => {
-  const { fullname, email, password, address } = req.body;
+  const { fullname, email, password } = req.body;
 
-  if (!fullname || !email || !password || !address) {
+  if (!fullname || !email || !password ) {
     return res.status(400).json({ message: 'Please fill all required fields' });
   }
 

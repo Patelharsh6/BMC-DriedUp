@@ -13,7 +13,6 @@ const SignUp = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    address: "",
   });
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -25,12 +24,15 @@ const SignUp = () => {
     special: false,
     match: false,
   });
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setPasswordValid((prev) => ({
       ...prev,
-      match: formData.password === formData.confirmPassword && formData.password.length > 0,
+      match:
+        formData.password === formData.confirmPassword &&
+        formData.password.length > 0,
     }));
   }, [formData.password, formData.confirmPassword]);
 
@@ -48,19 +50,33 @@ const SignUp = () => {
 
   const handleConfirmPasswordChange = (value) => {
     setFormData((prev) => ({ ...prev, confirmPassword: value }));
-    setPasswordValid((prev) => ({ ...prev, match: value === formData.password }));
+    setPasswordValid((prev) => ({
+      ...prev,
+      match: value === formData.password,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!passwordValid.match) {
-      alert("Passwords do not match!");
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.password.trim() ||
+      !formData.confirmPassword.trim()
+    ) {
+      alert("All fields are required!");
       return;
     }
 
-    if (!formData.name || !formData.email || !formData.password || !formData.address) {
-      alert("Please fill all required fields!");
+    const { length, upper, lower, number, special, match } = passwordValid;
+    if (!(length && upper && lower && number && special)) {
+      alert("Password must meet all strength requirements!");
+      return;
+    }
+
+    if (!match) {
+      alert("Passwords do not match!");
       return;
     }
 
@@ -76,13 +92,13 @@ const SignUp = () => {
       if (res.status === 201) {
         alert(res.data.message);
         localStorage.setItem("user", JSON.stringify(res.data.user));
-        localStorage.setItem('fullname', res.data.user.fullname);
-        localStorage.setItem('address', res.data.user.address);
+        localStorage.setItem("fullname", res.data.user.fullname);
+        localStorage.setItem("email", res.data.user.email);
         navigate("/homepage");
       }
     } catch (err) {
       console.error(err);
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         alert(err.response.data.message);
       } else {
         alert("Server error. Please try again later.");
@@ -96,19 +112,25 @@ const SignUp = () => {
     <div className="signup-wrapper">
       <div className="signup-card">
         <h2>Create Your Account</h2>
+
         <form onSubmit={handleSubmit} className="signup-form">
           <input
             type="text"
             placeholder="Full Name"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, name: e.target.value })
+            }
             required
           />
+
           <input
             type="email"
             placeholder="Email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
             required
           />
 
@@ -132,11 +154,21 @@ const SignUp = () => {
           </div>
 
           <div className="password-rules">
-            <p className={passwordValid.length ? "valid" : "invalid"}>• Minimum 8 characters</p>
-            <p className={passwordValid.upper ? "valid" : "invalid"}>• Uppercase letter</p>
-            <p className={passwordValid.lower ? "valid" : "invalid"}>• Lowercase letter</p>
-            <p className={passwordValid.number ? "valid" : "invalid"}>• Number</p>
-            <p className={passwordValid.special ? "valid" : "invalid"}>• Special character (!@#$%^&*)</p>
+            <p className={passwordValid.length ? "valid" : "invalid"}>
+              • Minimum 8 characters
+            </p>
+            <p className={passwordValid.upper ? "valid" : "invalid"}>
+              • Uppercase letter
+            </p>
+            <p className={passwordValid.lower ? "valid" : "invalid"}>
+              • Lowercase letter
+            </p>
+            <p className={passwordValid.number ? "valid" : "invalid"}>
+              • Number
+            </p>
+            <p className={passwordValid.special ? "valid" : "invalid"}>
+              • Special character (!@#$%^&*)
+            </p>
           </div>
 
           <input
@@ -147,7 +179,9 @@ const SignUp = () => {
             required
           />
           <div className="password-rules">
-            <p className={passwordValid.match ? "valid" : "invalid"}>• Passwords match</p>
+            <p className={passwordValid.match ? "valid" : "invalid"}>
+              • Passwords match
+            </p>
           </div>
 
           <button type="submit" className="signup-btn" disabled={loading}>
@@ -157,10 +191,14 @@ const SignUp = () => {
 
         <p className="signup-switch-text">
           Already have an account?{" "}
-          <span className="auth-link" onClick={() => navigate("/signinpage")}>
+          <span
+            className="auth-link"
+            onClick={() => navigate("/signinpage")}
+          >
             Sign In
           </span>
         </p>
+
         <p className="switch-text-back">
           <span onClick={() => navigate("/")}>Back to home</span>
         </p>

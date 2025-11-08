@@ -10,25 +10,32 @@ const Checkout = () => {
   const { totalPrice, discountApplied } = location.state || {};
 
   const storedUser = JSON.parse(localStorage.getItem('user'));
+
+  const storedAddress = storedUser?.address || {};
+
   const [formData, setFormData] = useState({
     name: storedUser?.fullname || '',
-    phone: storedUser?.address.phone || '',
-    address: storedUser?.address.address || '',
-    city: storedUser?.address.city || '',
-    state: storedUser?.address.state || '',
-    zip: storedUser?.address.zip || ''
+    phone: storedAddress.phone || '',
+    address: storedAddress.address || '',
+    city: storedAddress.city || '',
+    state: storedAddress.state || '',
+    zip: storedAddress.zip || '',
   });
 
   const [saveAddress, setSaveAddress] = useState(true);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!storedUser?.id) { alert('Login required'); navigate('/signinpage'); return; }
+    if (!storedUser?.id) {
+      alert('Please log in before placing an order.');
+      navigate('/signinpage');
+      return;
+    }
 
     try {
       const res = await fetch('http://localhost:3021/api/create-order', {
@@ -38,8 +45,8 @@ const Checkout = () => {
           userId: storedUser.id,
           items: cartItems,
           totalPrice,
-          shippingAddress: formData
-        })
+          shippingAddress: formData,
+        }),
       });
 
       if (!res.ok) throw new Error('Failed to place order');
@@ -48,8 +55,9 @@ const Checkout = () => {
         const addrRes = await fetch('http://localhost:3021/api/user/address', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: storedUser.id, address: formData })
+          body: JSON.stringify({ userId: storedUser.id, address: formData }),
         });
+
         if (addrRes.ok) {
           const { user } = await addrRes.json();
           localStorage.setItem('user', JSON.stringify(user));
@@ -57,17 +65,23 @@ const Checkout = () => {
       }
 
       clearCart();
-      alert(`Order placed successfully! ${discountApplied ? '15% discount applied.' : ''}`);
+      alert(
+        `Order placed successfully! ${
+          discountApplied ? '15% discount applied.' : ''
+        }`
+      );
       navigate('/orders');
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      alert(err.message || 'Something went wrong while placing your order.');
     }
   };
 
   return (
     <div className="driedup-checkout-container">
-      <button className="back-btn-checkout" onClick={() => navigate('/homepage')}>&larr; Back to Shop</button>
+      <button className="back-btn-checkout" onClick={() => navigate('/homepage')}>
+        &larr; Back to Shop
+      </button>
 
       <div className="driedup-checkout-wrapper">
         <form className="checkout-form" onSubmit={handleSubmit}>
@@ -75,45 +89,82 @@ const Checkout = () => {
 
           <label>
             Full Name
-            <input name="name" value={formData.name} onChange={handleChange} required />
+            <input
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              required
+            />
           </label>
 
           <label>
             Phone
-            <input name="phone" value={formData.phone} onChange={handleChange} required />
+            <input
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="Enter phone number"
+              required
+            />
           </label>
 
           <label>
             Address
-            <input name="address" value={formData.address} onChange={handleChange} required />
+            <input
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Enter street address"
+              required
+            />
           </label>
 
           <label>
             City
-            <input name="city" value={formData.city} onChange={handleChange} required />
+            <input
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              placeholder="Enter city"
+              required
+            />
           </label>
 
           <label>
             State
-            <input name="state" value={formData.state} onChange={handleChange} required />
+            <input
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              placeholder="Enter state"
+              required
+            />
           </label>
 
           <label>
             ZIP
-            <input name="zip" value={formData.zip} onChange={handleChange} required />
+            <input
+              name="zip"
+              value={formData.zip}
+              onChange={handleChange}
+              placeholder="Enter ZIP code"
+              required
+            />
           </label>
 
           <label className="save-address">
             <input
               type="checkbox"
               checked={saveAddress}
-              onChange={e => setSaveAddress(e.target.checked)}
+              onChange={(e) => setSaveAddress(e.target.checked)}
             />
-            Save Address
+            Save this address for future orders
           </label>
 
-
-          <button type="submit" className="place-order-btn">Place Order</button>
+          <button type="submit" className="place-order-btn">
+            Place Order
+          </button>
         </form>
 
         <div className="checkout-summary">
@@ -122,9 +173,13 @@ const Checkout = () => {
             <p>Your cart is empty.</p>
           ) : (
             <div className="cart-items">
-              {cartItems.map(item => (
+              {cartItems.map((item) => (
                 <div className="checkout-cart-item" key={item.id}>
-                  <img src={item.img} alt={item.name} className="checkout-cart-img" />
+                  <img
+                    src={item.img}
+                    alt={item.name}
+                    className="checkout-cart-img"
+                  />
                   <div className="checkout-cart-info">
                     <h4>{item.name}</h4>
                     <p>Qty: {item.quantity}</p>
@@ -139,9 +194,13 @@ const Checkout = () => {
           <hr />
           <div className="checkout-total">
             <strong>Total:</strong>
-            <span>₹{totalPrice?.toFixed(2)}</span>
+            <span>₹{totalPrice?.toFixed(2) || '0.00'}</span>
           </div>
-          {discountApplied && <div className="checkout-discount">15% First Order Discount Applied!</div>}
+          {discountApplied && (
+            <div className="checkout-discount">
+              15% First Order Discount Applied!
+            </div>
+          )}
         </div>
       </div>
     </div>

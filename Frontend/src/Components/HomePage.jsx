@@ -32,19 +32,16 @@ const Homepage = () => {
 
   const navigate = useNavigate();
 
-  // ===== User & UI State =====
   const [userData, setUserData] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // ===== Load user data on mount =====
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUserData(JSON.parse(storedUser));
     } else {
-      // Optional: Dummy user for testing
       const dummyUser = {
         name: '',
         email: '',
@@ -55,7 +52,6 @@ const Homepage = () => {
     }
   }, []);
 
-  // ===== Profile Modal =====
   const handleOpenProfile = () => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -67,13 +63,11 @@ const Homepage = () => {
     }
   };
 
-  // ===== Logout =====
   const handleLogout = () => {
     localStorage.clear();
     navigate('/signinpage');
   };
 
-  // ===== Checkout Logic =====
   const goToCheckout = async () => {
     if (!userData?.email) {
       alert('Please login first.');
@@ -96,7 +90,6 @@ const Homepage = () => {
 
   return (
     <div className="driedup-container">
-      {/* ===== Navigation Bar ===== */}
       <nav className="driedup-nav">
         <div className="driedup-nav-container">
           <img src={Mylogo} alt="DriedUp Logo" className="nav-logo" />
@@ -115,7 +108,6 @@ const Homepage = () => {
         </div>
       </nav>
 
-      {/* ===== Products Grid ===== */}
       <main className="driedup-products-grid">
         {products.map((product, index) => (
           <div
@@ -151,12 +143,11 @@ const Homepage = () => {
         ))}
       </main>
 
-      {/* ===== Profile Modal ===== */}
       <Modal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)}>
         <h3>User Profile</h3>
         <div className="driedup-profile-info">
           <strong>Name:</strong>
-          <p>{userData?.name || 'N/A'}</p>
+          <p>{userData?.fullname || 'N/A'}</p>
         </div>
         <div className="driedup-profile-info">
           <strong>Email:</strong>
@@ -168,7 +159,6 @@ const Homepage = () => {
         </div>
       </Modal>
 
-      {/* ===== Cart Modal ===== */}
       <Modal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)}>
         <h3>Your Cart</h3>
         <div className="driedup-cart-items-list">
