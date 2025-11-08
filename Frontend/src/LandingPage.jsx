@@ -19,7 +19,7 @@ const LandingPage = () => {
             <a href="#process" className="nav-item">Process</a>
             <a href="#about" className="nav-item">About</a>
             <button className="btn-login" onClick={()=>navigate('/signinpage')}>Login</button>
-            <button className="btn-shop">Shop Now</button>
+            <button className="btn-shop" onClick={()=>navigate('/signuppage')}>Shop Now</button>
           </div>
         </div>
       </nav>
@@ -30,7 +30,7 @@ const LandingPage = () => {
           <p className="hero-text">
             Healthy, natural, and irresistibly delicious dehydrated fruits — delivered right to your door.
           </p>
-          <button className="hero-btn">Start Shopping</button>
+          <button className="hero-btn" onClick={()=>navigate('/mainpage')}>Start Shopping</button>
         </div>
       </section>
 
@@ -123,7 +123,7 @@ const LandingPage = () => {
       <section className="cta">
         <h3>Ready to Taste the Difference?</h3>
         <p>Join now and get <strong>15% off</strong> your first order!</p>
-        <button className="btn-cta">Shop Now</button>
+        <button className="btn-cta" onClick={()=>navigate('/signuppage')}>Shop Now</button>
       </section>
 
       <footer className="footer">
