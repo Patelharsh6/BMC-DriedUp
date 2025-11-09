@@ -10,7 +10,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 
   return (
     <div className="driedup-modal-overlay" onClick={onClose}>
-      <div className="driedup-modal-content" onClick={e => e.stopPropagation()}>
+      <div className="driedup-modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="driedup-modal-close-btn" onClick={onClose}>
           &times;
         </button>
@@ -21,41 +21,27 @@ const Modal = ({ isOpen, onClose, children }) => {
 };
 
 const Homepage = () => {
-  const {
-    products,
-    cartItems,
-    handleAddToCart,
-    handleRemoveFromCart,
-    totalItems,
-    totalPrice
-  } = useCart();
-
+  const { products, cartItems, handleAddToCart, handleRemoveFromCart, totalItems, totalPrice } = useCart();
   const navigate = useNavigate();
-
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true); 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUserData(JSON.parse(storedUser));
+    if (!storedUser) {
+      navigate('/');
     } else {
-      const dummyUser = {
-        name: '',
-        email: '',
-        address: '',
-      };
-      localStorage.setItem('user', JSON.stringify(dummyUser));
-      setUserData(dummyUser);
+      setUserData(JSON.parse(storedUser));
     }
-  }, []);
+    const timeout = setTimeout(() => setLoading(false), 250);
+    return () => clearTimeout(timeout);
+  }, [navigate]);
 
   const handleOpenProfile = () => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUserData(JSON.parse(storedUser));
+    if (userData) {
       setIsProfileOpen(true);
     } else {
       alert('Please login first.');
@@ -119,7 +105,7 @@ const Homepage = () => {
               src={product.img}
               alt={product.name}
               className="driedup-product-img"
-              onError={e => { e.target.src = 'https://placehold.co/400x300/F87171/FFFFFF?text=Image+Error'; }}
+              onError={(e) => { e.target.src = 'https://placehold.co/400x300/F87171/FFFFFF?text=Image+Error'; }}
             />
             <div className="driedup-product-info">
               <h4>{product.name}</h4>
@@ -155,7 +141,7 @@ const Homepage = () => {
         </div>
         <div className="driedup-profile-info">
           <strong>Address:</strong>
-          <p>{userData?.address.address || 'N/A'}</p>
+          <p>{userData?.address?.address || 'N/A'}</p>
         </div>
       </Modal>
 
@@ -165,13 +151,13 @@ const Homepage = () => {
           {cartItems.length === 0 ? (
             <p>Your cart is empty.</p>
           ) : (
-            cartItems.map(item => (
+            cartItems.map((item) => (
               <div className="driedup-cart-item" key={item.id}>
                 <img
                   src={item.img}
                   alt={item.name}
                   className="driedup-cart-item-img"
-                  onError={e => { e.target.src = 'https://placehold.co/60x60/F87171/FFFFFF?text=X'; }}
+                  onError={(e) => { e.target.src = 'https://placehold.co/60x60/F87171/FFFFFF?text=X'; }}
                 />
                 <div className="driedup-cart-item-info">
                   <h4>{item.name}</h4>

@@ -14,7 +14,7 @@ const OrderHistory = () => {
       if (!storedUser || !storedUser.id) {
         setError('You must be logged in to view your orders.');
         setLoading(false);
-        navigate('/signin');
+        navigate('/');
         return;
       }
 

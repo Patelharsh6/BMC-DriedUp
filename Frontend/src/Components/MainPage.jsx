@@ -63,7 +63,6 @@ const products = [
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem("user");
   const [title, setTitle] = useState("");
 
   useEffect(() => {
@@ -78,9 +77,7 @@ const MainPage = () => {
   }, []);
 
   const handleAddToCart = (product) => {
-    if (!isLoggedIn) {
       alert("Please login to add products to cart!");
-    }
   };
 
   return (
