@@ -90,6 +90,25 @@
     transform: translateY(-3px) scale(1.02);
     box-shadow: 0 4px 10px rgba(0, 121, 107, 0.15);
 }
+.btn-logout{
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #fbe9e7;
+  color: #d84315;
+  border: 1px solid #ffccbc;
+}
+
+.btn-logout:hover {
+  background: #ffccbc;
+  color: #d84315;
+}
+
 
 .btn-shop {
     background: #00796b;
@@ -102,7 +121,7 @@
     box-shadow: 0 4px 10px rgba(0, 121, 107, 0.25);
 }
 
-.nav-toggle {
+/* .nav-toggle {
     display: none;
     background: none;
     border: none;
@@ -146,6 +165,69 @@
 .nav-menu .btn-shop {
     background: #00796b;
     color: white;
+} */
+
+/* --- Responsive Navigation --- */
+.nav-toggle {
+  display: none;
+  font-size: 1.8rem;
+  color: #00796b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-toggle:hover {
+  transform: scale(1.1);
+  color: #004d40;
+}
+
+.nav-menu {
+  display: none;
+  flex-direction: column;
+  background: #ffffff;
+  position: absolute;
+  top: 70px;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.3s ease-out;
+}
+
+.nav-menu.show {
+  display: flex;
+}
+
+.nav-menu .nav-item {
+  margin: 10px 0;
+  color: #004d40;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav-menu .nav-item:hover {
+  color: #00796b;
+}
+
+.nav-menu button {
+  margin-top: 10px;
+  width: 100%;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
 }
 
 .hero {
@@ -592,7 +674,6 @@
     opacity: 1;
 }
 
-/* ===== Keyframe Animations ===== */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -675,8 +756,6 @@
         opacity: 1;
         max-height: 300px;
     }
-
-    /* Adjust max-height as needed */
 }
 
 @keyframes slideInLeft {

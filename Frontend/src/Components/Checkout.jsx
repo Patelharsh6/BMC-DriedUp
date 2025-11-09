@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext.jsx';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Checkout.css';
@@ -10,7 +10,6 @@ const Checkout = () => {
   const { totalPrice, discountApplied } = location.state || {};
 
   const storedUser = JSON.parse(localStorage.getItem('user'));
-
   const storedAddress = storedUser?.address || {};
 
   const [formData, setFormData] = useState({
@@ -24,6 +23,12 @@ const Checkout = () => {
 
   const [saveAddress, setSaveAddress] = useState(true);
 
+  useEffect(() => {
+    if (!storedUser) {
+      navigate('/');
+    }
+  }, [navigate]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -31,6 +36,7 @@ const Checkout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!storedUser?.id) {
       alert('Please log in before placing an order.');
       navigate('/signinpage');

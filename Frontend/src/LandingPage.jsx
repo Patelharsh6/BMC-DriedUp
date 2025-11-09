@@ -1,26 +1,99 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
 import Mylogo from "./assets/Mylogo.png";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [auth, setAuth] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const existingUser = localStorage.getItem("user");
+    setAuth(!!existingUser);
+  }, []);
+
+  const handleShopNow = () => {
+    if (!auth) {
+      navigate("/signuppage");
+    } else {
+      navigate("/homepage");
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (!auth) {
+      alert("Login Required!");
+    } else {
+      navigate("/homepage");
+    }
+  };
+
+  const handleStartShopping = () => {
+    if (!auth) {
+      navigate("/mainpage");
+    } else {
+      navigate("/homepage");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setAuth(false);
+    alert("You have been logged out!");
+    navigate("/");
+  };
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
   return (
     <div className="LandingPage-container">
       <nav className="nav">
         <div className="nav-container">
-          <a href="#" className="nav-brand">
+          <div className="nav-brand">
             <img src={Mylogo} alt="My Logo" className="nav-logo" />
             <span className="nav-name">DriedUp</span>
-          </a>
+          </div>
+
+          <button className="nav-toggle" onClick={toggleMenu}>
+            ☰
+          </button>
 
           <div className="nav-links">
             <a href="#products" className="nav-item">Products</a>
             <a href="#process" className="nav-item">Process</a>
             <a href="#about" className="nav-item">About</a>
-            <button className="btn-login" onClick={() => navigate('/signinpage')}>Login</button>
-            <button className="btn-shop" onClick={() => navigate('/signuppage')}>Shop Now</button>
+
+            {!auth ? (
+              <>
+                <button className="btn-login" onClick={() => navigate("/signinpage")}>Login</button>
+                <button className="btn-shop" onClick={handleShopNow}>Shop Now</button>
+              </>
+            ) : (
+              <>
+                <button className="btn-shop" onClick={handleShopNow}>Shop Now</button>
+                <button className="btn-logout" onClick={handleLogout}>Logout</button>
+              </>
+            )}
           </div>
+        </div>
+
+        <div className={`nav-menu ${menuOpen ? "show" : ""}`}>
+          <a href="#products" className="nav-item" onClick={() => setMenuOpen(false)}>Products</a>
+          <a href="#process" className="nav-item" onClick={() => setMenuOpen(false)}>Process</a>
+          <a href="#about" className="nav-item" onClick={() => setMenuOpen(false)}>About</a>
+
+          {!auth ? (
+            <>
+              <button className="btn-login" onClick={() => { navigate("/signinpage"); setMenuOpen(false); }}>Login</button>
+              <button className="btn-shop" onClick={() => { handleShopNow(); setMenuOpen(false); }}>Shop Now</button>
+            </>
+          ) : (
+            <>
+              <button className="btn-shop" onClick={() => { handleShopNow(); setMenuOpen(false); }}>Shop Now</button>
+              <button className="btn-logout" onClick={() => { handleLogout(); setMenuOpen(false); }}>Logout</button>
+            </>
+          )}
         </div>
       </nav>
 
@@ -30,7 +103,7 @@ const LandingPage = () => {
           <p className="hero-text">
             Healthy, natural, and irresistibly delicious dehydrated fruits — delivered right to your door.
           </p>
-          <button className="hero-btn" onClick={() => navigate('/mainpage')}>Start Shopping</button>
+          <button className="hero-btn" onClick={handleStartShopping}>Start Shopping</button>
         </div>
       </section>
 
@@ -61,7 +134,7 @@ const LandingPage = () => {
             <p>Sweet, chewy, and full of Vitamin A.</p>
             <div className="product-bottom">
               <span>349.00 ₹</span>
-              <button className="btn-cart" onClick={()=>alert('Login required!')}>Add to Cart</button>
+              <button className="btn-cart" onClick={handleAddToCart}>Add to Cart</button>
             </div>
           </div>
 
@@ -71,7 +144,7 @@ const LandingPage = () => {
             <p>A burst of tropical flavor in every bite.</p>
             <div className="product-bottom">
               <span>499 ₹</span>
-              <button className="btn-cart" onClick={()=>alert('Login required!')}>Add to Cart</button>
+              <button className="btn-cart" onClick={handleAddToCart}>Add to Cart</button>
             </div>
           </div>
 
@@ -81,7 +154,7 @@ const LandingPage = () => {
             <p>A tangy, sweet antioxidant powerhouse.</p>
             <div className="product-bottom">
               <span>650 ₹</span>
-              <button className="btn-cart" onClick={()=>alert('Login required!')}>Add to Cart</button>
+              <button className="btn-cart" onClick={handleAddToCart}>Add to Cart</button>
             </div>
           </div>
         </div>
@@ -111,9 +184,12 @@ const LandingPage = () => {
       <section id="about" className="about">
         <div className="about-grid">
           <div className="about-info">
-            <h3 className="section-head">About US</h3>
+            <h3 className="section-head">About Us</h3>
             <p>
-              Founded by <br /><strong>1. Ansh Patoliya (230109) (USN:1AUA23BCS010)</strong><br /><strong>2. Het Limbani (230106) (USN:1AUA23BCS063)</strong><br /> <strong>3. Harsh Patel (230105) (USN:1AUA23BCS)</strong><br />
+              Founded by <br />
+              <strong>1. Ansh Patoliya (230109) (USN: 1AUA23BCS010)</strong><br />
+              <strong>2. Het Limbani (230106) (USN: 1AUA23BCS063)</strong><br />
+              <strong>3. Harsh Patel (230105) (USN: 1AUA23BCS058)</strong><br />
               DriedUp began from a love of healthy, sustainable living.
             </p>
           </div>
@@ -123,7 +199,7 @@ const LandingPage = () => {
       <section className="cta">
         <h3>Ready to Taste the Difference?</h3>
         <p>Join now and get <strong>15% off</strong> your first order!</p>
-        <button className="btn-cta" onClick={() => navigate('/signuppage')}>Shop Now</button>
+        <button className="btn-cta" onClick={handleShopNow}>Shop Now</button>
       </section>
 
       <footer className="footer">
@@ -136,10 +212,8 @@ const LandingPage = () => {
           <div className="footer-links">
             <a href="#products">Products</a>
             <a href="#about">About</a>
-            <a href="#">FAQ</a>
-            <a href="#">Contact</a>
+            <a href="#about">Contact</a>
           </div>
-
         </div>
 
         <div className="footer-bottom">
